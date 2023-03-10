@@ -1,10 +1,10 @@
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER
 
-g, config = Cora()
+# # g, config = Cora()
 g, config = CiteSeer()
-g, config = PubMed()
-g, config = ER()
-g, config = connSW()
+# g, config = PubMed()
+# g, config = ER()
+# g, config = connSW()
 
 def analyze_graph(g, config):
   import networkx as nx
