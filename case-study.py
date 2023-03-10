@@ -1,4 +1,3 @@
-import networkx as nx
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER
 
 g, config = Cora()
@@ -8,6 +7,7 @@ g, config = ER()
 g, config = connSW()
 
 def analyze_graph(g, config):
+  import networkx as nx
   from time import time
   from IM import eigen, degree, pi, sigma, Netshield
   from score import scoreIC, Y, SobolT, sobols, IE
