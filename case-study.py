@@ -1,11 +1,5 @@
 import networkx as nx
-from time import time
-
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER
-from IM import eigen, degree, pi, sigma, Netshield
-from score import scoreIC, Y, SobolT, sobols, IE
-from simulation import simulationIC, simulationLT
-import statistics as s
 
 g, config = Cora()
 g, config = CiteSeer()
@@ -14,6 +8,11 @@ g, config = ER()
 g, config = connSW()
 
 def analyze_graph(g, config):
+  from time import time
+  from IM import eigen, degree, pi, sigma, Netshield
+  from score import scoreIC, Y, SobolT, sobols, IE
+  from simulation import simulationIC, simulationLT
+  import statistics as s
 
   print("Graph is on.")
   #todo info deprecated
