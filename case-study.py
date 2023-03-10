@@ -1,18 +1,12 @@
+import networkx as nx
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER
-
-# # g, config = Cora()
-g, config = CiteSeer()
-# g, config = PubMed()
-# g, config = ER()
-# g, config = connSW()
+from time import time
+from IM import eigen, degree, pi, sigma, Netshield
+from score import scoreIC, Y, SobolT, sobols, IE
+from simulation import simulationIC, simulationLT
+import statistics as s
 
 def analyze_graph(g, config):
-  import networkx as nx
-  from time import time
-  from IM import eigen, degree, pi, sigma, Netshield
-  from score import scoreIC, Y, SobolT, sobols, IE
-  from simulation import simulationIC, simulationLT
-  import statistics as s
 
   print("Graph is on.")
   #todo info deprecated
@@ -126,13 +120,23 @@ def analyze_graph(g, config):
     rank.append(node)
   print(rank)
   
-# config the graphs  
-graph_configs = [(Cora(), "Cora"), (CiteSeer(), "CiteSeer"), (PubMed(), "PubMed"), (ER(), "ER"), (connSW(), "connSW")]
 
-for graph, config_name in graph_configs:
-    print("Analyzing ", config_name)
-    analyze_graph(graph, config)
+print("Analyzing ", 'Cora')
+g, config = Cora()
+analyze_graph(g, config)
 
+print("Analyzing ", 'CiteSeer')
+g, config = CiteSeer()
+analyze_graph(g, config)
 
+print("Analyzing ", 'PubMed')
+g, config = PubMed()
+analyze_graph(g, config)
 
+print("Analyzing ", 'ER')
+g, config = ER()
+analyze_graph(g, config)
 
+print("Analyzing ", 'connSW')
+g, config = connSW()
+analyze_graph(g, config)
