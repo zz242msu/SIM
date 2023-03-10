@@ -14,7 +14,8 @@ g, config = CiteSeer()
 # g, config = connSW()
 
 print("Graph is on.")
-print(nx.info(g))
+#todo info deprecated
+# print(nx.info(g))
 
 print('------------------------------------------------')
 print('degree')
