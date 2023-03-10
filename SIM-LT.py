@@ -8,7 +8,7 @@ from score import effectLT
 g, config = Cora()
 
 print("Cora graph is on.")
-print(nx.info(g))
+# print(nx.info(g))
 
 print('------------------------------------------------')
 print('Simulation Greedy')
