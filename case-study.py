@@ -7,11 +7,11 @@ from score import scoreIC, Y, SobolT, sobols, IE
 from simulation import simulationIC, simulationLT
 import statistics as s
 
-# g, config = Cora()
+g, config = Cora()
 g, config = CiteSeer()
-# g, config = PubMed()
-# g, config = ER()
-# g, config = connSW()
+g, config = PubMed()
+g, config = ER()
+g, config = connSW()
 
 def analyze_graph(g, config):
 
@@ -126,6 +126,14 @@ def analyze_graph(g, config):
   for node in sorted(ST, key=ST.get, reverse = True):
     rank.append(node)
   print(rank)
+  
+# config the graphs  
+graph_configs = [(Cora(), "Cora"), (CiteSeer(), "CiteSeer"), (PubMed(), "PubMed"), (ER(), "ER"), (connSW(), "connSW")]
+
+for graph, config_name in graph_configs:
+    print("Analyzing ", config_name)
+    analyze_graph(graph, config)
+
 
 
 
