@@ -8,7 +8,7 @@ from score import effectIC
 g, config = Cora()
 
 print("Cora graph is on.")
-print(nx.info(g))
+# print(nx.info(g))
 
 print('------------------------------------------------')
 print('greedy')
