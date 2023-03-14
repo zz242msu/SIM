@@ -1,7 +1,7 @@
 import networkx as nx
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER
 from time import time
-from IM import eigen, degree, pi, sigma, Netshield
+from IM import greedyLT, greedyIC, eigen, degree, pi, sigma, Netshield
 from score import scoreIC, Y, SobolT, sobols, IE
 from simulation import simulationIC, simulationLT
 import statistics as s
