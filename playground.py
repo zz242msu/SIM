@@ -7,6 +7,10 @@ from simulation import simulationIC, simulationLT
 import statistics as s
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
+import torch_geometric.datasets as ds
+import random
+
+
 
 # Create a small directed graph
 g = nx.DiGraph()
