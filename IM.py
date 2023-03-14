@@ -342,7 +342,7 @@ def greedyLT(g, config, budget):
 
                 for i in g.nodes():
                     threshold = random.randrange(1, 20)
-                    threshold = round(threshold / mc_number, 2)
+                    threshold = round(threshold / 100, 2)
                     config_temp.add_node_configuration("threshold", i, threshold)
 
                 model_temp.set_initial_status(config_temp)
