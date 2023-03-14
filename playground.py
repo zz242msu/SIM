@@ -5,6 +5,8 @@ from IM import eigen, degree, pi, sigma, Netshield
 from score import scoreIC, Y, SobolT, sobols, IE
 from simulation import simulationIC, simulationLT
 import statistics as s
+import ndlib.models.epidemics as ep
+import ndlib.models.ModelConfig as mc
 
 # Create a small directed graph
 g = nx.DiGraph()
