@@ -269,8 +269,11 @@ def greedyIC(g, config, budget):
             # g_temp.add_nodes_from(g)
             # g_temp.add_edges_from(g.edges)
             result = []
+            
+            # number of Monte Carlo simulations to be run for the IC model
+            mc_number = 100
 
-            for iter in range(100):
+            for iter in range(mc_number):
 
                 model_temp = ep.IndependentCascadesModel(g) # _temp
                 config_temp = mc.Configuration()
@@ -324,7 +327,9 @@ def greedyLT(g, config, budget):
             # g_temp.add_edges_from(g.edges)
             result = []
 
-            for iter in range(100):
+            # number of Monte Carlo simulations to be run for the LT model
+            mc_number = 100
+            for iter in range(mc_number):
 
                 model_temp = ep.ThresholdModel(g) # _temp
                 config_temp = mc.Configuration()
