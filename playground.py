@@ -1,4 +1,10 @@
 import networkx as nx
+from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER
+from time import time
+from IM import eigen, degree, pi, sigma, Netshield
+from score import scoreIC, Y, SobolT, sobols, IE
+from simulation import simulationIC, simulationLT
+import statistics as s
 
 # Create a small directed graph
 g = nx.DiGraph()
@@ -21,5 +27,5 @@ config.add_model_configuration("edges", "threshold", edge_thresholds)
 budget = 2
 
 # Run the greedy algorithm with the LT function
-selected_nodes = greedy(g, config, budget, LT)
+selected_nodes = greedyLT(g, config, budget)
 print("Selected nodes:", selected_nodes)
