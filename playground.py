@@ -39,4 +39,10 @@ budget = 2
 
 # Run the greedy algorithm with the LT function
 selected_nodes = greedyLT(g, config, budget)
-print("Selected nodes:", selected_nodes)
+print("LT Selected nodes:", selected_nodes)
+
+2
+
+# Run the greedy algorithm with the IC function
+selected_nodes = greedyIC(g, config, budget)
+print("IC Selected nodes:", selected_nodes)
