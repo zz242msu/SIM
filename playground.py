@@ -25,11 +25,11 @@ edge_thresholds = {
 
 config = mc.Configuration()
 
-    for a, b in g.edges():
-        weight = random.randrange(40,80)
-        weight = round(weight / 100, 2)
-        config.add_edge_configuration("threshold", (a, b), weight)
-        g[a][b]['weight'] = weight
+for a, b in g.edges():
+    weight = random.randrange(40,80)
+    weight = round(weight / 100, 2)
+    config.add_edge_configuration("threshold", (a, b), weight)
+    g[a][b]['weight'] = weight
 
 budget = 2
 
