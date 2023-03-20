@@ -272,7 +272,7 @@ def greedy(g, config, budget):
 
     return selected
 
-def greedy_celf(g, config, budget):
+def celf(g, config, budget):
 
     selected = []
     candidates = list(g.nodes())
@@ -290,14 +290,49 @@ def greedy_celf(g, config, budget):
             gain, node = heapq.heappop(gains)
             seed = selected + [node]
             result = IC(g, config, seed)
-            gain_new = s.mean(result)
-            if gain_new == -gain:
+            new_gain = s.mean(result)
+            if new_gain == -gain:
                 break
             else:
-                heapq.heappush(gains, (-gain_new, node))
+                heapq.heappush(gains, (-new_gain, node))
 
         selected.append(node)
         candidates.remove(node)
+
+    return selected
+
+def celfpp(g, config, budget):
+    selected = []
+    candidates = list(g.nodes())
+
+    gains = []
+    for node in candidates:
+        seed = selected + [node]
+        result = IC(g, config, seed)
+        gain = s.mean(result)
+        heapq.heappush(gains, (-gain, node, None))
+
+    last_seed = None
+
+    for i in range(budget):
+        while True:
+            gain, node, last_added_seed = heapq.heappop(gains)
+
+            if last_added_seed == last_seed:
+                new_gain = -gain
+            else:
+                seed = selected + [node]
+                result = IC(g, config, seed)
+                new_gain = s.mean(result)
+
+            if new_gain == -gain:
+                break
+            else:
+                heapq.heappush(gains, (-new_gain, node, last_seed))
+
+        selected.append(node)
+        candidates.remove(node)
+        last_seed = node
 
     return selected
 
