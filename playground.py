@@ -1,7 +1,7 @@
 import networkx as nx
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER
 from time import time
-from IM import greedyLT, greedyIC, eigen, degree, pi, sigma, Netshield
+from IM import greedyLT, greedyIC, eigen, degree, pi, sigma, Netshield, celf, celfpp
 from score import scoreIC, Y, SobolT, sobols, IE
 from simulation import simulationIC, simulationLT
 import statistics as s
@@ -44,5 +44,9 @@ print("LT Selected nodes:", selected_nodes)
 2
 
 # Run the greedy algorithm with the IC function
-selected_nodes = greedyIC(g, config, budget)
-print("IC Selected nodes:", selected_nodes)
+selected_nodes = celf(g, config, budget)
+print("CELF IC Selected nodes:", selected_nodes)
+
+# Run the greedy algorithm with the IC function
+selected_nodes = celfpp(g, config, budget)
+print("CELFPP IC Selected nodes:", selected_nodes)
