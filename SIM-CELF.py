@@ -11,7 +11,7 @@ print("Cora graph is on.")
 # print(nx.info(g))
 
 print('------------------------------------------------')
-print('greedy')
+print('CELF IC')
 start = time()
 set = celf(g,config,5)
 end = time()
