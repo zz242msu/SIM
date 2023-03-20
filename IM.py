@@ -397,6 +397,114 @@ def LT(g, config, seed):
 
     return result
 
+def greedyIC(g, config, budget):
+
+    selected = []
+    candidates = []
+
+    for node in g.nodes():
+        candidates.append(node)
+
+    for i in range(budget):
+        max = 0
+        index = -1
+        for node in candidates:
+            seed = []
+            for item in selected:
+                seed.append(item)
+            seed.append(node)
+
+            # g_temp = g.__class__()
+            # g_temp.add_nodes_from(g)
+            # g_temp.add_edges_from(g.edges)
+            result = []
+
+            for iter in range(100):
+
+                model_temp = ep.IndependentCascadesModel(g) # _temp
+                config_temp = mc.Configuration()
+                config_temp.add_model_initial_configuration('Infected', seed)
+
+                for a, b in g.edges(): # _temp
+                    weight = config.config["edges"]['threshold'][(a, b)]
+                    # g_temp[a][b]['weight'] = weight
+                    config_temp.add_edge_configuration('threshold', (a, b), weight)
+
+                model_temp.set_initial_status(config_temp)
+
+                iterations = model_temp.iteration_bunch(5)
+
+                total_no = 0
+
+                for j in range(5):
+                    a = iterations[j]['node_count'][1]
+                    total_no += a
+
+                result.append(total_no)
+
+            if s.mean(result) > max:
+                max = s.mean(result)
+                index = node
+
+        selected.append(index)
+        candidates.remove(index)
+
+    return selected
+
+def greedyLT(g, config, budget):
+
+    selected = []
+    candidates = []
+
+    for node in g.nodes():
+        candidates.append(node)
+
+    for i in range(budget):
+        max = 0
+        index = -1
+        for node in candidates:
+            seed = []
+            for item in selected:
+                seed.append(item)
+            seed.append(node)
+
+            # g_temp = g.__class__()
+            # g_temp.add_nodes_from(g)
+            # g_temp.add_edges_from(g.edges)
+            result = []
+
+            for iter in range(100):
+
+                model_temp = ep.ThresholdModel(g) # _temp
+                config_temp = mc.Configuration()
+                config_temp.add_model_initial_configuration('Infected', seed)
+
+                for a, b in g.edges(): # _temp
+                    weight = config.config["edges"]['threshold'][(a, b)]
+                    # g_temp[a][b]['weight'] = weight
+                    config_temp.add_edge_configuration('threshold', (a, b), weight)
+
+                for i in g.nodes():
+                    threshold = random.randrange(1, 20)
+                    threshold = round(threshold / 100, 2)
+                    config_temp.add_node_configuration("threshold", i, threshold)
+
+                model_temp.set_initial_status(config_temp)
+
+                iterations = model_temp.iteration_bunch(5)
+
+                total_no = iterations[4]['node_count'][1]
+                result.append(total_no)
+
+            if s.mean(result) > max:
+                max = s.mean(result)
+                index = node
+
+        selected.append(index)
+        candidates.remove(index)
+
+    return selected
+
 '''
 def SobolIM2(g, config):
     g_deg = g.__class__()
