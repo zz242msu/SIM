@@ -41,6 +41,10 @@ budget = 2
 selected_nodes = greedyLT(g, config, budget)
 print("LT Selected nodes:", selected_nodes)
 
+# Run the greedy algorithm with the IC function
+selected_nodes = greedyIC(g, config, budget)
+print("IC Selected nodes:", selected_nodes)
+
 # Run the CELF algorithm with the IC function
 selected_nodes = celf(g, config, budget)
 print("CELF IC Selected nodes:", selected_nodes)
