@@ -8,6 +8,7 @@ import ndlib.models.ModelConfig as mc
 import statistics as s
 import heapdict as hd
 import random
+import heapq
 
 def eigen(g, config, budget):
 
@@ -248,53 +249,19 @@ def SoboldegreeDis(g, config, budget):
 
     return selected
 
-def greedyIC(g, config, budget):
+def greedy(g, config, budget):
 
     selected = []
-    candidates = []
-
-    for node in g.nodes():
-        candidates.append(node)
+    candidates = list(g.nodes())
 
     for i in range(budget):
         max = 0
         index = -1
         for node in candidates:
-            seed = []
-            for item in selected:
-                seed.append(item)
-            seed.append(node)
+            seed = selected + [node]
 
-            # g_temp = g.__class__()
-            # g_temp.add_nodes_from(g)
-            # g_temp.add_edges_from(g.edges)
-            result = []
-            
-            # number of Monte Carlo simulations to be run for the IC model
-            mc_number = 100
-
-            for iter in range(mc_number):
-
-                model_temp = ep.IndependentCascadesModel(g) # _temp
-                config_temp = mc.Configuration()
-                config_temp.add_model_initial_configuration('Infected', seed)
-
-                for a, b in g.edges(): # _temp
-                    weight = config.config["edges"]['threshold'][(a, b)]
-                    # g_temp[a][b]['weight'] = weight
-                    config_temp.add_edge_configuration('threshold', (a, b), weight)
-
-                model_temp.set_initial_status(config_temp)
-
-                iterations = model_temp.iteration_bunch(5)
-
-                total_no = 0
-
-                for j in range(5):
-                    a = iterations[j]['node_count'][1]
-                    total_no += a
-
-                result.append(total_no)
+            result = IC(g, config, seed)
+            #result = LT(g, config, seed)
 
             if s.mean(result) > max:
                 max = s.mean(result)
@@ -305,61 +272,95 @@ def greedyIC(g, config, budget):
 
     return selected
 
-def greedyLT(g, config, budget):
+def greedy_celf(g, config, budget):
 
     selected = []
-    candidates = []
+    candidates = list(g.nodes())
 
-    for node in g.nodes():
-        candidates.append(node)
+    gains = []
+    for node in candidates:
+        seed = selected + [node]
+        result = IC(g, config, seed)
+        gain = s.mean(result)
+        # heapq min-heap
+        heapq.heappush(gains, (-gain, node))
 
     for i in range(budget):
-        max = 0
-        index = -1
-        for node in candidates:
-            seed = []
-            for item in selected:
-                seed.append(item)
-            seed.append(node)
+        while True:
+            gain, node = heapq.heappop(gains)
+            seed = selected + [node]
+            result = IC(g, config, seed)
+            gain_new = s.mean(result)
+            if gain_new == -gain:
+                break
+            else:
+                heapq.heappush(gains, (-gain_new, node))
 
-            # g_temp = g.__class__()
-            # g_temp.add_nodes_from(g)
-            # g_temp.add_edges_from(g.edges)
-            result = []
-
-            # number of Monte Carlo simulations to be run for the LT model
-            mc_number = 100
-            for iter in range(mc_number):
-
-                model_temp = ep.ThresholdModel(g) # _temp
-                config_temp = mc.Configuration()
-                config_temp.add_model_initial_configuration('Infected', seed)
-
-                for a, b in g.edges(): # _temp
-                    weight = config.config["edges"]['threshold'][(a, b)]
-                    # g_temp[a][b]['weight'] = weight
-                    config_temp.add_edge_configuration('threshold', (a, b), weight)
-
-                for i in g.nodes():
-                    threshold = random.randrange(1, 20)
-                    threshold = round(threshold / 100, 2)
-                    config_temp.add_node_configuration("threshold", i, threshold)
-
-                model_temp.set_initial_status(config_temp)
-
-                iterations = model_temp.iteration_bunch(5)
-
-                total_no = iterations[4]['node_count'][1]
-                result.append(total_no)
-
-            if s.mean(result) > max:
-                max = s.mean(result)
-                index = node
-
-        selected.append(index)
-        candidates.remove(index)
+        selected.append(node)
+        candidates.remove(node)
 
     return selected
+
+def IC(g, config, seed):
+    # number of Monte Carlo simulations to be run for the IC model
+    mc_number = 100
+    result = []
+
+    for iter in range(mc_number):
+
+        model_temp = ep.IndependentCascadesModel(g) # _temp
+        config_temp = mc.Configuration()
+        config_temp.add_model_initial_configuration('Infected', seed)
+
+        for a, b in g.edges(): # _temp
+            weight = config.config["edges"]['threshold'][(a, b)]
+            # g_temp[a][b]['weight'] = weight
+            config_temp.add_edge_configuration('threshold', (a, b), weight)
+
+        model_temp.set_initial_status(config_temp)
+
+        iterations = model_temp.iteration_bunch(5)
+
+        total_no = 0
+
+        for j in range(5):
+            a = iterations[j]['node_count'][1]
+            total_no += a
+
+        result.append(total_no)
+
+    return result
+
+def LT(g, config, seed):
+    # number of Monte Carlo simulations to be run for the LT model
+    mc_number = 100
+    result = []
+
+    for iter in range(mc_number):
+
+        model_temp = ep.ThresholdModel(g) # _temp
+        config_temp = mc.Configuration()
+        config_temp.add_model_initial_configuration('Infected', seed)
+
+        for a, b in g.edges(): # _temp
+            weight = config.config["edges"]['threshold'][(a, b)]
+            # g_temp[a][b]['weight'] = weight
+            config_temp.add_edge_configuration('threshold', (a, b), weight)
+
+        for i in g.nodes():
+            threshold = random.randrange(1, 20)
+            threshold = round(threshold / 100, 2)
+            config_temp.add_node_configuration("threshold", i, threshold)
+
+        model_temp.set_initial_status(config_temp)
+
+        iterations = model_temp.iteration_bunch(5)
+
+        total_no = iterations[4]['node_count'][1]
+
+        result.append(total_no)
+
+    return result
 
 '''
 def SobolIM2(g, config):
