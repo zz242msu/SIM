@@ -8,6 +8,7 @@ import ndlib.models.ModelConfig as mc
 import statistics as s
 import heapdict as hd
 import random
+import heapq
 
 def eigen(g, config, budget):
 
@@ -258,6 +259,154 @@ def SoboldegreeDis(g, config, budget):
         selected.remove((rem))
 
     return selected
+
+def greedy(g, config, budget):
+
+    selected = []
+    candidates = list(g.nodes())
+
+    for i in range(budget):
+        max = 0
+        index = -1
+        for node in candidates:
+            seed = selected + [node]
+
+            result = IC(g, config, seed)
+            #result = LT(g, config, seed)
+
+            if s.mean(result) > max:
+                max = s.mean(result)
+                index = node
+
+        selected.append(index)
+        candidates.remove(index)
+
+    return selected
+
+def celf(g, config, budget):
+
+    selected = []
+    candidates = list(g.nodes())
+
+    gains = []
+    for node in candidates:
+        seed = selected + [node]
+        result = IC(g, config, seed)
+        gain = s.mean(result)
+        # heapq min-heap
+        heapq.heappush(gains, (-gain, node))
+
+    for i in range(budget):
+        while True:
+            gain, node = heapq.heappop(gains)
+            seed = selected + [node]
+            result = IC(g, config, seed)
+            new_gain = s.mean(result)
+            if new_gain == -gain:
+                break
+            else:
+                heapq.heappush(gains, (-new_gain, node))
+
+        selected.append(node)
+        candidates.remove(node)
+
+    return selected
+
+def celfpp(g, config, budget):
+    selected = []
+    candidates = list(g.nodes())
+
+    gains = []
+    for node in candidates:
+        seed = selected + [node]
+        result = IC(g, config, seed)
+        gain = s.mean(result)
+        heapq.heappush(gains, (-gain, node, None))
+
+    last_seed = None
+
+    for i in range(budget):
+        while True:
+            gain, node, last_added_seed = heapq.heappop(gains)
+
+            if last_added_seed == last_seed:
+                new_gain = -gain
+            else:
+                seed = selected + [node]
+                result = IC(g, config, seed)
+                new_gain = s.mean(result)
+
+            if new_gain == -gain:
+                break
+            else:
+                heapq.heappush(gains, (-new_gain, node, last_seed))
+
+        selected.append(node)
+        candidates.remove(node)
+        last_seed = node
+
+    return selected
+
+def IC(g, config, seed):
+    # number of Monte Carlo simulations to be run for the IC model
+    mc_number = 100
+    result = []
+
+    for iter in range(mc_number):
+
+        model_temp = ep.IndependentCascadesModel(g) # _temp
+        config_temp = mc.Configuration()
+        config_temp.add_model_initial_configuration('Infected', seed)
+
+        for a, b in g.edges(): # _temp
+            weight = config.config["edges"]['threshold'][(a, b)]
+            # g_temp[a][b]['weight'] = weight
+            config_temp.add_edge_configuration('threshold', (a, b), weight)
+
+        model_temp.set_initial_status(config_temp)
+
+        iterations = model_temp.iteration_bunch(5)
+
+        total_no = 0
+
+        for j in range(5):
+            a = iterations[j]['node_count'][1]
+            total_no += a
+
+        result.append(total_no)
+
+    return result
+
+def LT(g, config, seed):
+    # number of Monte Carlo simulations to be run for the LT model
+    mc_number = 100
+    result = []
+
+    for iter in range(mc_number):
+
+        model_temp = ep.ThresholdModel(g) # _temp
+        config_temp = mc.Configuration()
+        config_temp.add_model_initial_configuration('Infected', seed)
+
+        for a, b in g.edges(): # _temp
+            weight = config.config["edges"]['threshold'][(a, b)]
+            # g_temp[a][b]['weight'] = weight
+            config_temp.add_edge_configuration('threshold', (a, b), weight)
+
+        for i in g.nodes():
+            threshold = random.randrange(1, 20)
+            threshold = round(threshold / 100, 2)
+            config_temp.add_node_configuration("threshold", i, threshold)
+
+        model_temp.set_initial_status(config_temp)
+
+        iterations = model_temp.iteration_bunch(5)
+
+        total_no = iterations[4]['node_count'][1]
+
+        result.append(total_no)
+
+    return result
 
 def greedyIC(g, config, budget):
 
