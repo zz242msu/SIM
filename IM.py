@@ -132,6 +132,17 @@ def sigma(g, config, budget):
 
     return result
 
+def random_select(g, config, budget):
+    nodes = list(g.nodes())
+    selected = []
+
+    for k in range(budget):
+        node = random.choice(nodes)
+        selected.append(node)
+        nodes.remove(node)
+
+    return selected
+
 def Netshield(g, config, budget):
 
     g_greedy = g.__class__()
