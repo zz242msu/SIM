@@ -37,6 +37,10 @@ for a, b in g.edges():
 
 budget = 2
 
+# Run the random algorithm
+selected_nodes = random_select(g, config, budget)
+print("Random Selected nodes:", selected_nodes)
+
 # Run the greedy algorithm with the LT function
 selected_nodes = greedyLT(g, config, budget)
 print("LT Selected nodes:", selected_nodes)
